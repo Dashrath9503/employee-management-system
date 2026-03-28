@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Access Denied — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage=''"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-ban topbar-icon me-2" style="color:#ef4444;"></i>Access Denied</span>
+  </div>
+  <div class="page-body">
+    <div class="text-center" style="padding:80px 20px;">
+      <div style="width:80px;height:80px;background:#fee2e2;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;">
+        <i class="fas fa-ban fa-2x" style="color:#ef4444;"></i>
+      </div>
+      <h3 style="font-weight:700;color:#1e293b;">Access Denied</h3>
+      <p style="color:#64748b;max-width:400px;margin:10px auto 24px;">
+        You don't have permission to access this page. Please contact your administrator.
+      </p>
+      <a href="/dashboard" class="btn btn-primary px-4">
+        <i class="fas fa-home me-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

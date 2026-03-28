@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login — EMS</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{font-family:'Inter',sans-serif;box-sizing:border-box;}
+    body{margin:0;min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);display:flex;align-items:center;justify-content:center;}
+    .login-wrapper{width:100%;max-width:420px;padding:20px;}
+    .login-card{background:#fff;border-radius:20px;padding:40px 36px;box-shadow:0 25px 60px rgba(0,0,0,.4);}
+    .brand-logo{width:54px;height:54px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;margin:0 auto 16px;}
+    .brand-name{font-size:1.5rem;font-weight:700;color:#1e293b;text-align:center;}
+    .brand-sub{font-size:.82rem;color:#94a3b8;text-align:center;margin-bottom:28px;}
+    .form-label{font-size:.84rem;font-weight:500;color:#374151;}
+    .input-group-text{background:#f8fafc;border:1.5px solid #e2e8f0;border-right:none;color:#94a3b8;}
+    .form-control{border:1.5px solid #e2e8f0;font-size:.9rem;padding:11px 14px;}
+    .form-control:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.12);outline:none;}
+    .input-group .form-control{border-left:none;}
+    .input-group:focus-within .input-group-text{border-color:#4f46e5;}
+    .btn-login{background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:10px;padding:12px;font-size:.95rem;font-weight:600;color:#fff;width:100%;transition:opacity .2s;}
+    .btn-login:hover{opacity:.9;color:#fff;}
+    .alert-login{border:none;border-radius:10px;font-size:.85rem;padding:11px 14px;}
+    .cred-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-top:20px;}
+    .cred-title{font-size:.75rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+    .cred-row{display:flex;justify-content:space-between;font-size:.8rem;padding:3px 0;color:#475569;}
+    .cred-row span:last-child{font-weight:600;font-family:monospace;color:#1e293b;}
+  </style>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="brand-logo"><i class="fas fa-users-cog"></i></div>
+    <div class="brand-name">EMP<span style="color:#4f46e5;">MANAGE</span></div>
+    <div class="brand-sub">Employee Management System</div>
+
+    <div th:if="${param.error}" class="alert alert-danger alert-login mb-3">
+      <i class="fas fa-exclamation-circle me-2"></i>Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success alert-login mb-3">
+      <i class="fas fa-check-circle me-2"></i>You have been logged out.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user fa-sm"></i></span>
+          <input type="text" name="username" class="form-control" placeholder="Enter username" required autofocus/>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock fa-sm"></i></span>
+          <input type="password" name="password" class="form-control" placeholder="Enter password" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn-login">
+        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+      </button>
+    </form>
+
+    <div class="cred-box">
+      <div class="cred-title"><i class="fas fa-key me-1"></i>Demo Credentials</div>
+      <div class="cred-row"><span>Admin</span><span>admin / admin123</span></div>
+      <div class="cred-row"><span>HR Manager</span><span>hr / hr123</span></div>
+      <div class="cred-row"><span>Employee</span><span>emp / emp123</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

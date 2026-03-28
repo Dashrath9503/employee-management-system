@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}"><title>Employee Details — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='employees'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-user topbar-icon me-2"></i>Employee Details</span>
+    <div class="d-flex gap-2">
+      <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="btn btn-sm btn-primary px-3"
+         sec:authorize="hasAnyRole('ADMIN','HR')">
+        <i class="fas fa-edit me-1"></i>Edit
+      </a>
+      <a href="/employees" class="btn btn-sm btn-outline-secondary px-3">
+        <i class="fas fa-arrow-left me-1"></i>Back
+      </a>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="row g-3">
+      <!-- Profile Card -->
+      <div class="col-md-4">
+        <div class="card-pro card-pro-body text-center">
+          <th:block th:if="${employee.profileImage != null and !#strings.isEmpty(employee.profileImage)}">
+            <img th:src="@{'/uploads/profile-photos/' + ${employee.profileImage}}"
+                 style="width:90px;height:90px;border-radius:20px;object-fit:cover;margin-bottom:14px;"/>
+          </th:block>
+          <th:block th:unless="${employee.profileImage != null and !#strings.isEmpty(employee.profileImage)}">
+            <div class="emp-avatar mx-auto mb-3"
+                 style="width:90px;height:90px;border-radius:20px;font-size:1.8rem;"
+                 th:style="'width:90px;height:90px;border-radius:20px;font-size:1.8rem;background:hsl('+${#strings.length(employee.firstName)*47}+',55%,52%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;'">
+              <span th:text="${#strings.substring(employee.firstName,0,1)+#strings.substring(employee.lastName,0,1)}">AB</span>
+            </div>
+          </th:block>
+
+          <h5 style="font-weight:700;color:#1e293b;" th:text="${employee.fullName}">Full Name</h5>
+          <p style="color:#64748b;font-size:.87rem;" th:text="${employee.jobTitle ?: 'N/A'}">Job Title</p>
+          <span th:class="${employee.status.name()=='ACTIVE'?'badge-active':employee.status.name()=='ON_LEAVE'?'badge-leave':'badge-inactive'}"
+                th:text="${employee.status}">ACTIVE</span>
+
+          <hr style="margin:18px 0;border-color:#f1f5f9;"/>
+
+          <div class="text-start">
+            <div class="mb-3">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Email</div>
+              <div style="font-size:.88rem;font-weight:500;color:#1e293b;" th:text="${employee.email}">-</div>
+            </div>
+            <div class="mb-3">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Phone</div>
+              <div style="font-size:.88rem;font-weight:500;color:#1e293b;" th:text="${employee.phone ?: '-'}">-</div>
+            </div>
+            <div>
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Department</div>
+              <div style="font-size:.88rem;font-weight:500;color:#1e293b;" th:text="${employee.department != null ? employee.department.name : '-'}">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="col-md-8">
+        <div class="card-pro card-pro-body">
+          <div class="section-hdr"><i class="fas fa-info-circle me-2" style="color:#4f46e5;"></i>Employee Information</div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Employee ID</div>
+              <div style="font-size:.92rem;font-weight:600;color:#1e293b;"
+                   th:text="'EMP-' + ${#strings.toString(employee.id).length() == 1 ? '000' : #strings.toString(employee.id).length() == 2 ? '00' : #strings.toString(employee.id).length() == 3 ? '0' : ''} + ${employee.id}">EMP-0001</div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Gender</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;" th:text="${employee.gender ?: '-'}">-</div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Date of Birth</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;"
+                   th:text="${employee.dateOfBirth != null ? #temporals.format(employee.dateOfBirth,'dd MMM yyyy') : '-'}">-</div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Join Date</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;"
+                   th:text="${employee.joinDate != null ? #temporals.format(employee.joinDate,'dd MMM yyyy') : '-'}">-</div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Salary</div>
+              <div style="font-size:.92rem;font-weight:600;color:#16a34a;">
+                <span th:if="${employee.salary != null}"
+                      th:text="'₹ ' + ${#numbers.formatDecimal(employee.salary,0,'COMMA',0,'POINT')}">-</span>
+                <span th:unless="${employee.salary != null}">-</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Status</div>
+              <span th:class="${employee.status.name()=='ACTIVE'?'badge-active':employee.status.name()=='ON_LEAVE'?'badge-leave':'badge-inactive'}"
+                    th:text="${employee.status}">-</span>
+            </div>
+            <div class="col-12">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Address</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;" th:text="${employee.address ?: '-'}">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="row g-3 mt-0">
+          <div class="col-md-6">
+            <a th:href="@{/attendance/employee/{id}(id=${employee.id})}" class="card-pro card-pro-body d-flex align-items-center gap-3 text-decoration-none" style="padding:16px 20px;">
+              <div class="stat-icon" style="background:#e0f2fe;"><i class="fas fa-calendar-check" style="color:#0284c7;"></i></div>
+              <div>
+                <div style="font-weight:600;font-size:.9rem;color:#1e293b;">Attendance</div>
+                <div style="font-size:.77rem;color:#64748b;">View attendance records</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="/leave" class="card-pro card-pro-body d-flex align-items-center gap-3 text-decoration-none" style="padding:16px 20px;">
+              <div class="stat-icon" style="background:#fce7f3;"><i class="fas fa-calendar-times" style="color:#db2777;"></i></div>
+              <div>
+                <div style="font-weight:600;font-size:.9rem;color:#1e293b;">Leave Requests</div>
+                <div style="font-size:.77rem;color:#64748b;">View leave history</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Department Form — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='departments'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-building topbar-icon me-2"></i><span th:text="${pageTitle}">Department</span></span>
+    <a href="/departments" class="btn btn-sm btn-outline-secondary px-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
+  </div>
+  <div class="page-body">
+    <div class="card-pro card-pro-body" style="max-width:600px;">
+      <form th:action="@{/departments/save}" th:object="${department}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <div class="section-hdr"><i class="fas fa-building me-2" style="color:#4f46e5;"></i>Department Details</div>
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <label class="form-label">Department Name *</label>
+            <input type="text" th:field="*{name}" class="form-control"
+                   th:classappend="${#fields.hasErrors('name')} ? ' is-invalid'"
+                   placeholder="e.g. Information Technology"/>
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea th:field="*{description}" class="form-control" rows="3"
+                      placeholder="Department description"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Manager Name</label>
+            <input type="text" th:field="*{managerName}" class="form-control" placeholder="Manager name"/>
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>
+            <span th:text="${department.id != null ? 'Update' : 'Save'}">Save</span>
+          </button>
+          <a href="/departments" class="btn btn-outline-secondary px-4"><i class="fas fa-times me-1"></i>Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}"><title>Employee Form — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='emp-add'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title">
+      <i class="fas fa-user-edit topbar-icon me-2"></i>
+      <span th:text="${pageTitle}">Employee Form</span>
+    </span>
+    <a href="/employees" class="btn btn-sm btn-outline-secondary px-3">
+      <i class="fas fa-arrow-left me-1"></i>Back
+    </a>
+  </div>
+
+  <div class="page-body">
+    <div class="card-pro card-pro-body" style="max-width:860px;">
+      <form th:action="@{/employees/save}" th:object="${employee}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}"/>
+
+        <!-- Personal Info -->
+        <div class="section-hdr"><i class="fas fa-user me-2" style="color:#4f46e5;"></i>Personal Information</div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label">First Name *</label>
+            <input type="text" th:field="*{firstName}" class="form-control"
+                   th:classappend="${#fields.hasErrors('firstName')} ? ' is-invalid'"
+                   placeholder="First name"/>
+            <div class="invalid-feedback" th:errors="*{firstName}"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Last Name *</label>
+            <input type="text" th:field="*{lastName}" class="form-control"
+                   th:classappend="${#fields.hasErrors('lastName')} ? ' is-invalid'"
+                   placeholder="Last name"/>
+            <div class="invalid-feedback" th:errors="*{lastName}"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Gender</label>
+            <select th:field="*{gender}" class="form-select">
+              <option value="">Select gender</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Profile Photo</label>
+            <input type="file" name="photoFile" class="form-control" accept="image/*"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Address</label>
+            <input type="text" th:field="*{address}" class="form-control" placeholder="Address"/>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="section-hdr"><i class="fas fa-phone me-2" style="color:#4f46e5;"></i>Contact Information</div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label">Email *</label>
+            <input type="email" th:field="*{email}" class="form-control"
+                   th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'"
+                   placeholder="Email address"/>
+            <div class="invalid-feedback" th:errors="*{email}"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" th:field="*{phone}" class="form-control"
+                   th:classappend="${#fields.hasErrors('phone')} ? ' is-invalid'"
+                   placeholder="10-digit phone number"/>
+            <div class="invalid-feedback" th:errors="*{phone}"></div>
+          </div>
+        </div>
+
+        <!-- Job Info -->
+        <div class="section-hdr"><i class="fas fa-briefcase me-2" style="color:#4f46e5;"></i>Job Information</div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label class="form-label">Job Title</label>
+            <input type="text" th:field="*{jobTitle}" class="form-control" placeholder="e.g. Senior Developer"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Department</label>
+            <select th:field="*{department}" class="form-select">
+              <option value="">Select department</option>
+              <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"
+                      th:selected="${employee.department != null and employee.department.id == d.id}"></option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select th:field="*{status}" class="form-select">
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+              <option value="ON_LEAVE">On Leave</option>
+              <option value="TERMINATED">Terminated</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Join Date</label>
+            <input type="date" th:field="*{joinDate}" class="form-control"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Salary (₹)</label>
+            <input type="number" th:field="*{salary}" class="form-control" placeholder="e.g. 50000" step="1"/>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>
+            <span th:text="${employee.id != null ? 'Update Employee' : 'Save Employee'}">Save</span>
+          </button>
+          <a href="/employees" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-times me-1"></i>Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--sidebar-w:255px;--primary:#4f46e5;--primary-dark:#3730a3;--sidebar-bg:#0f172a;--sidebar-text:rgba(255,255,255,.65);--topbar-h:64px;}
+    *{font-family:'Inter',sans-serif;box-sizing:border-box;}
+    body{background:#f1f5f9;margin:0;color:#1e293b;}
+    /* ── Sidebar ── */
+    .sidebar{width:var(--sidebar-w);height:100vh;background:var(--sidebar-bg);position:fixed;top:0;left:0;z-index:200;display:flex;flex-direction:column;transition:all .3s;}
+    .sidebar-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .sidebar-brand .logo{display:flex;align-items:center;gap:10px;}
+    .sidebar-brand .logo-icon{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.95rem;}
+    .sidebar-brand .logo-text{font-size:1rem;font-weight:700;color:#fff;line-height:1.1;}
+    .sidebar-brand .logo-sub{font-size:.65rem;color:rgba(255,255,255,.35);font-weight:400;}
+    .sidebar-nav{flex:1;overflow-y:auto;padding:10px 0;}
+    .nav-section{font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:14px 18px 5px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;margin:2px 10px;border-radius:9px;color:var(--sidebar-text);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;cursor:pointer;}
+    .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+    .nav-item.active{background:rgba(79,70,229,.3);color:#fff;border-left:3px solid var(--primary);}
+    .nav-item i{width:18px;font-size:.9rem;color:var(--primary);flex-shrink:0;}
+    .nav-item.active i{color:#a5b4fc;}
+    .sidebar-user{padding:14px 18px;border-top:1px solid rgba(255,255,255,.07);}
+    .user-card{background:rgba(255,255,255,.06);border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:34px;height:34px;border-radius:8px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;}
+    .user-name{font-size:.82rem;font-weight:600;color:#fff;}
+    .user-role{font-size:.68rem;color:rgba(255,255,255,.4);}
+    .role-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:600;}
+    .role-admin{background:rgba(239,68,68,.2);color:#fca5a5;}
+    .role-hr{background:rgba(139,92,246,.2);color:#c4b5fd;}
+    .role-employee{background:rgba(34,197,94,.2);color:#86efac;}
+    /* ── Main ── */
+    .main-content{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{height:var(--topbar-h);background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;padding:0 28px;gap:14px;position:sticky;top:0;z-index:100;}
+    .topbar-title{font-weight:600;font-size:1rem;color:#1e293b;flex:1;}
+    .topbar-icon{color:var(--primary);}
+    .page-body{padding:24px 28px;flex:1;}
+    /* ── Cards ── */
+    .card-pro{background:#fff;border-radius:14px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+    .card-pro-body{padding:22px;}
+    /* ── Stat Cards ── */
+    .stat-card{background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s;}
+    .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.09);}
+    .stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+    .stat-val{font-size:1.8rem;font-weight:700;color:#1e293b;line-height:1;}
+    .stat-label{font-size:.75rem;color:#64748b;font-weight:500;margin-top:3px;}
+    /* ── Table ── */
+    .table-pro thead th{background:#f8fafc;color:#64748b;font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding:12px 16px;}
+    .table-pro tbody td{padding:13px 16px;vertical-align:middle;font-size:.85rem;border-bottom:1px solid #f1f5f9;}
+    .table-pro tbody tr:last-child td{border-bottom:none;}
+    .table-pro tbody tr:hover{background:#f8fafc;}
+    /* ── Avatar ── */
+    .emp-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;}
+    /* ── Badges ── */
+    .badge-active{background:#dcfce7;color:#166534;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-inactive{background:#fee2e2;color:#991b1b;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-leave{background:#fef9c3;color:#854d0e;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-terminated{background:#f1f5f9;color:#475569;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-pending{background:#fef9c3;color:#854d0e;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-approved{background:#dcfce7;color:#166534;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    .badge-rejected{background:#fee2e2;color:#991b1b;padding:4px 11px;border-radius:20px;font-size:.73rem;font-weight:600;}
+    /* ── Alerts ── */
+    .alert-pro{border:none;border-radius:10px;font-size:.87rem;padding:13px 16px;}
+    .alert-success-pro{background:#dcfce7;color:#166534;}
+    .alert-danger-pro{background:#fee2e2;color:#991b1b;}
+    /* ── Form ── */
+    .form-label{font-weight:500;font-size:.84rem;color:#374151;margin-bottom:5px;}
+    .form-control,.form-select{border-radius:9px;border:1.5px solid #e2e8f0;font-size:.88rem;padding:10px 13px;transition:border-color .2s,box-shadow .2s;}
+    .form-control:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.12);outline:none;}
+    .form-control.is-invalid,.form-select.is-invalid{border-color:#ef4444;}
+    .section-hdr{font-weight:600;font-size:.9rem;color:#1e293b;padding-bottom:8px;margin-bottom:16px;border-bottom:2px solid #f1f5f9;}
+    /* ── Buttons ── */
+    .btn-primary{background:var(--primary);border-color:var(--primary);border-radius:9px;font-weight:500;font-size:.88rem;}
+    .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark);}
+    .btn-outline-primary{border-color:var(--primary);color:var(--primary);border-radius:9px;font-size:.84rem;}
+    .btn-outline-primary:hover{background:var(--primary);color:#fff;}
+    .btn-sm{padding:5px 13px;font-size:.8rem;}
+    /* ── Search Box ── */
+    .search-wrap{position:relative;}
+    .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.85rem;}
+    .search-wrap input{padding-left:35px!important;}
+  </style>
+</head>
+
+<div th:fragment="sidebar">
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-users-cog"></i></div>
+        <div>
+          <div class="logo-text">EMP<span style="color:#a5b4fc;">MANAGE</span></div>
+          <div class="logo-sub">Employee Management System</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a href="/dashboard" class="nav-item" th:classappend="${activePage == 'dashboard'} ? ' active' : ''">
+        <i class="fas fa-chart-pie"></i> Dashboard
+      </a>
+
+      <div class="nav-section">Employees</div>
+      <a href="/employees" class="nav-item" th:classappend="${activePage == 'employees'} ? ' active' : ''">
+        <i class="fas fa-id-badge"></i> All Employees
+      </a>
+      <a href="/employees/add" class="nav-item" sec:authorize="hasAnyRole('ADMIN','HR')"
+         th:classappend="${activePage == 'emp-add'} ? ' active' : ''">
+        <i class="fas fa-user-plus"></i> Add Employee
+      </a>
+
+      <div class="nav-section">Organization</div>
+      <a href="/departments" class="nav-item" th:classappend="${activePage == 'departments'} ? ' active' : ''">
+        <i class="fas fa-building"></i> Departments
+      </a>
+
+      <div class="nav-section">Modules</div>
+      <a href="/attendance" class="nav-item" th:classappend="${activePage == 'attendance'} ? ' active' : ''">
+        <i class="fas fa-calendar-check"></i> Attendance
+      </a>
+      <a href="/leave" class="nav-item" th:classappend="${activePage == 'leave'} ? ' active' : ''">
+        <i class="fas fa-calendar-times"></i> Leave
+      </a>
+      <a href="/leave/all" class="nav-item" sec:authorize="hasAnyRole('ADMIN','HR')"
+         th:classappend="${activePage == 'leave-all'} ? ' active' : ''">
+        <i class="fas fa-tasks"></i> Manage Leaves
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-card">
+        <div class="user-avatar" sec:authentication="name" th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">A</div>
+        <div>
+          <div class="user-name" sec:authentication="name">User</div>
+          <span class="role-badge role-admin"    sec:authorize="hasRole('ADMIN')">ADMIN</span>
+          <span class="role-badge role-hr"       sec:authorize="hasRole('HR')">HR</span>
+          <span class="role-badge role-employee" sec:authorize="hasRole('EMPLOYEE')">EMPLOYEE</span>
+        </div>
+        <a href="/logout" class="ms-auto" style="color:rgba(255,255,255,.4);font-size:.85rem;" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

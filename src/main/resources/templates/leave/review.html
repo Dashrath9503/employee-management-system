@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Review Leave — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='leave-all'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-gavel topbar-icon me-2"></i>Review Leave Request</span>
+    <a href="/leave/all" class="btn btn-sm btn-outline-secondary px-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
+  </div>
+  <div class="page-body">
+    <div class="row g-3" style="max-width:700px;">
+      <div class="col-12">
+        <div class="card-pro card-pro-body">
+          <div class="section-hdr"><i class="fas fa-info-circle me-2" style="color:#4f46e5;"></i>Request Details</div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Employee</div>
+              <div style="font-size:.92rem;font-weight:600;color:#1e293b;" th:text="${leave.employee.fullName}">-</div>
+            </div>
+            <div class="col-md-6">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Leave Type</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;" th:text="${leave.leaveType}">-</div>
+            </div>
+            <div class="col-md-4">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">From</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;"
+                   th:text="${#temporals.format(leave.startDate,'dd MMM yyyy')}">-</div>
+            </div>
+            <div class="col-md-4">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">To</div>
+              <div style="font-size:.92rem;font-weight:500;color:#1e293b;"
+                   th:text="${#temporals.format(leave.endDate,'dd MMM yyyy')}">-</div>
+            </div>
+            <div class="col-md-4">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Days</div>
+              <div style="font-size:.92rem;font-weight:700;color:#4f46e5;" th:text="${leave.days}">0</div>
+            </div>
+            <div class="col-12">
+              <div style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;">Reason</div>
+              <div style="font-size:.9rem;color:#1e293b;background:#f8fafc;padding:12px;border-radius:8px;margin-top:4px;"
+                   th:text="${leave.reason ?: 'No reason provided'}">-</div>
+            </div>
+          </div>
+
+          <div class="section-hdr"><i class="fas fa-gavel me-2" style="color:#4f46e5;"></i>Your Decision</div>
+          <form th:action="@{/leave/review/{id}(id=${leave.id})}" method="post">
+            <div class="mb-3">
+              <label class="form-label">Comment (optional)</label>
+              <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..."></textarea>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" name="action" value="approve" class="btn btn-success px-4">
+                <i class="fas fa-check me-2"></i>Approve
+              </button>
+              <button type="submit" name="action" value="reject" class="btn btn-danger px-4">
+                <i class="fas fa-times me-2"></i>Reject
+              </button>
+              <a href="/leave/all" class="btn btn-outline-secondary px-4">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

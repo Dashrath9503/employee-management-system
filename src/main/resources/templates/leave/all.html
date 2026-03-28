@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Manage Leaves — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='leave-all'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-tasks topbar-icon me-2"></i>Manage Leave Requests</span>
+    <span style="background:#fef9c3;color:#854d0e;padding:5px 14px;border-radius:20px;font-size:.82rem;font-weight:600;">
+      <i class="fas fa-clock me-1"></i><span th:text="${pendingCount}">0</span> Pending
+    </span>
+  </div>
+  <div class="page-body">
+    <div th:if="${successMessage}" class="alert-pro alert-success-pro mb-3">
+      <i class="fas fa-check-circle me-2"></i><span th:text="${successMessage}"></span>
+    </div>
+    <div class="card-pro card-pro-body">
+      <div class="table-responsive">
+        <table class="table table-pro mb-0">
+          <thead>
+            <tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="l : ${leaves}">
+              <td>
+                <div style="font-weight:600;font-size:.87rem;" th:text="${l.employee.fullName}">-</div>
+                <div style="font-size:.74rem;color:#94a3b8;" th:text="${l.employee.department != null ? l.employee.department.name : ''}">-</div>
+              </td>
+              <td th:text="${l.leaveType}">-</td>
+              <td th:text="${#temporals.format(l.startDate,'dd MMM yyyy')}">-</td>
+              <td th:text="${#temporals.format(l.endDate,'dd MMM yyyy')}">-</td>
+              <td th:text="${l.days}">0</td>
+              <td style="max-width:140px;font-size:.82rem;" th:text="${l.reason}">-</td>
+              <td>
+                <span th:class="${l.status.name()=='PENDING'?'badge-pending':l.status.name()=='APPROVED'?'badge-approved':'badge-rejected'}"
+                      th:text="${l.status}">-</span>
+              </td>
+              <td>
+                <a th:href="@{/leave/review/{id}(id=${l.id})}" class="btn btn-sm btn-outline-primary"
+                   th:if="${l.status.name() == 'PENDING'}">
+                  <i class="fas fa-gavel me-1"></i>Review
+                </a>
+                <span th:unless="${l.status.name() == 'PENDING'}" style="font-size:.78rem;color:#94a3b8;">
+                  by <span th:text="${l.reviewedBy}">-</span>
+                </span>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(leaves)}">
+              <td colspan="8" class="text-center text-muted py-4">No leave requests found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

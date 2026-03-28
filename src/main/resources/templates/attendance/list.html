@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}"><title>Attendance — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='attendance'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-calendar-check topbar-icon me-2"></i>Attendance</span>
+    <a href="/attendance/mark" class="btn btn-sm btn-primary px-3" sec:authorize="hasAnyRole('ADMIN','HR')">
+      <i class="fas fa-edit me-1"></i>Mark Attendance
+    </a>
+  </div>
+  <div class="page-body">
+    <div th:if="${successMessage}" class="alert-pro alert-success-pro mb-3">
+      <i class="fas fa-check-circle me-2"></i><span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Date filter -->
+    <div class="card-pro card-pro-body mb-3" style="padding:14px 20px;">
+      <form th:action="@{/attendance}" method="get" class="d-flex align-items-center gap-3">
+        <label class="form-label mb-0" style="font-weight:500;white-space:nowrap;">Select Date:</label>
+        <input type="date" name="date" class="form-control" style="width:180px;"
+               th:value="${#temporals.format(date,'yyyy-MM-dd')}"/>
+        <button type="submit" class="btn btn-primary btn-sm px-3">
+          <i class="fas fa-search me-1"></i>View
+        </button>
+        <span style="font-size:.85rem;color:#64748b;">
+          Showing: <strong th:text="${#temporals.format(date,'dd MMM yyyy')}">Today</strong>
+          — <strong th:text="${records.size()} + ' records'">0 records</strong>
+        </span>
+      </form>
+    </div>
+
+    <div class="card-pro card-pro-body">
+      <div class="table-responsive">
+        <table class="table table-pro mb-0">
+          <thead>
+            <tr><th>Employee</th><th>Department</th><th>Status</th><th>Check In</th><th>Remarks</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="a : ${records}">
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar"
+                       th:style="'background:hsl('+${#strings.length(a.employee.firstName)*47}+',55%,52%)'">
+                    <span th:text="${#strings.substring(a.employee.firstName,0,1)+#strings.substring(a.employee.lastName,0,1)}">AB</span>
+                  </div>
+                  <div style="font-weight:600;font-size:.87rem;" th:text="${a.employee.fullName}">Name</div>
+                </div>
+              </td>
+              <td th:text="${a.employee.department != null ? a.employee.department.name : '-'}">-</td>
+              <td>
+                <span th:class="${a.status.name()=='PRESENT'?'badge-active':a.status.name()=='ABSENT'?'badge-inactive':a.status.name()=='HALF_DAY'?'badge-leave':'badge-terminated'}"
+                      th:text="${a.status}">-</span>
+              </td>
+              <td th:text="${a.checkIn != null ? a.checkIn : '-'}">-</td>
+              <td style="font-size:.82rem;" th:text="${a.remarks ?: '-'}">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(records)}">
+              <td colspan="5" class="text-center text-muted py-4">
+                No attendance records for this date.
+                <a href="/attendance/mark" sec:authorize="hasAnyRole('ADMIN','HR')">Mark now</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

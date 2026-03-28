@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Apply Leave — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='leave'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-calendar-plus topbar-icon me-2"></i>Apply for Leave</span>
+    <a href="/leave" class="btn btn-sm btn-outline-secondary px-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
+  </div>
+  <div class="page-body">
+    <div th:if="${errorMessage}" class="alert-pro alert-danger-pro mb-3">
+      <i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}"></span>
+    </div>
+    <div class="card-pro card-pro-body" style="max-width:640px;">
+      <form th:action="@{/leave/save}" th:object="${leave}" method="post">
+        <div class="section-hdr"><i class="fas fa-calendar-times me-2" style="color:#4f46e5;"></i>Leave Details</div>
+        <div class="row g-3 mb-4">
+          <div class="col-12">
+            <label class="form-label">Employee *</label>
+            <select name="employeeId" class="form-select" required>
+              <option value="">Select employee</option>
+              <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.fullName + ' — ' + (e.jobTitle ?: 'N/A')}"></option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Leave Type *</label>
+            <select th:field="*{leaveType}" class="form-select" required>
+              <option value="">Select type</option>
+              <option value="SICK">Sick Leave</option>
+              <option value="CASUAL">Casual Leave</option>
+              <option value="ANNUAL">Annual Leave</option>
+              <option value="MATERNITY">Maternity Leave</option>
+              <option value="PATERNITY">Paternity Leave</option>
+              <option value="UNPAID">Unpaid Leave</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">From Date *</label>
+            <input type="date" th:field="*{startDate}" class="form-control" required/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">To Date *</label>
+            <input type="date" th:field="*{endDate}" class="form-control" required/>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Reason</label>
+            <textarea th:field="*{reason}" class="form-control" rows="3" placeholder="Reason for leave..."></textarea>
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4"><i class="fas fa-paper-plane me-2"></i>Submit Application</button>
+          <a href="/leave" class="btn btn-outline-secondary px-4"><i class="fas fa-times me-1"></i>Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

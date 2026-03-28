@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head}"><title>Employees — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='employees'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title"><i class="fas fa-id-badge topbar-icon me-2"></i>Employees</span>
+    <a href="/employees/export/excel" class="btn btn-sm btn-outline-success me-2" sec:authorize="hasAnyRole('ADMIN','HR')">
+      <i class="fas fa-file-excel me-1"></i>Excel
+    </a>
+    <a href="/employees/export/pdf" class="btn btn-sm btn-outline-danger me-2" sec:authorize="hasAnyRole('ADMIN','HR')">
+      <i class="fas fa-file-pdf me-1"></i>PDF
+    </a>
+    <a href="/employees/add" class="btn btn-sm btn-primary px-3" sec:authorize="hasAnyRole('ADMIN','HR')">
+      <i class="fas fa-user-plus me-1"></i>Add Employee
+    </a>
+  </div>
+
+  <div class="page-body">
+    <div th:if="${successMessage}" class="alert-pro alert-success-pro mb-3">
+      <i class="fas fa-check-circle me-2"></i><span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert-pro alert-danger-pro mb-3">
+      <i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="card-pro card-pro-body">
+      <!-- Filters Bar -->
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <form th:action="@{/employees}" method="get" class="d-flex gap-2 flex-wrap flex-grow-1">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" name="keyword" class="form-control" placeholder="Search employees..."
+                   th:value="${keyword}" style="width:220px;"/>
+          </div>
+          <select name="status" class="form-select" style="width:150px;">
+            <option value="">All Status</option>
+            <option value="ACTIVE"     th:selected="${selectedStatus=='ACTIVE'}">Active</option>
+            <option value="INACTIVE"   th:selected="${selectedStatus=='INACTIVE'}">Inactive</option>
+            <option value="ON_LEAVE"   th:selected="${selectedStatus=='ON_LEAVE'}">On Leave</option>
+            <option value="TERMINATED" th:selected="${selectedStatus=='TERMINATED'}">Terminated</option>
+          </select>
+          <select name="deptId" class="form-select" style="width:170px;">
+            <option value="">All Departments</option>
+            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"
+                    th:selected="${selectedDept == d.id}"></option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-sm px-3">
+            <i class="fas fa-filter me-1"></i>Filter
+          </button>
+          <a href="/employees" class="btn btn-sm btn-outline-secondary px-3">
+            <i class="fas fa-times"></i>
+          </a>
+        </form>
+        <span class="text-muted" style="font-size:.8rem;" th:text="'(' + ${totalCount} + ' records)'"></span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-pro mb-0">
+          <thead>
+            <tr>
+              <th>#</th><th>Employee</th><th>Job Title</th><th>Department</th>
+              <th>Phone</th><th>Salary</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="emp, s : ${employees}">
+              <td style="color:#94a3b8;" th:text="${s.count}">1</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar" th:style="'background:hsl('+${#strings.length(emp.firstName)*47}+',55%,52%)'">
+                    <span th:text="${#strings.substring(emp.firstName,0,1)+#strings.substring(emp.lastName,0,1)}">AB</span>
+                  </div>
+                  <div>
+                    <div style="font-weight:600;font-size:.87rem;" th:text="${emp.fullName}">Name</div>
+                    <div style="font-size:.74rem;color:#94a3b8;" th:text="${emp.email}">email</div>
+                  </div>
+                </div>
+              </td>
+              <td th:text="${emp.jobTitle ?: '-'}">-</td>
+              <td th:text="${emp.department != null ? emp.department.name : '-'}">-</td>
+              <td th:text="${emp.phone ?: '-'}">-</td>
+              <td>
+                <span th:if="${emp.salary != null}"
+                      th:text="'₹' + ${#numbers.formatDecimal(emp.salary,0,'COMMA',0,'POINT')}">-</span>
+                <span th:unless="${emp.salary != null}">-</span>
+              </td>
+              <td>
+                <span th:class="${emp.status.name()=='ACTIVE'?'badge-active':emp.status.name()=='ON_LEAVE'?'badge-leave':emp.status.name()=='TERMINATED'?'badge-terminated':'badge-inactive'}"
+                      th:text="${emp.status}">-</span>
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  <a th:href="@{/employees/view/{id}(id=${emp.id})}" class="btn btn-sm btn-outline-primary" title="View">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a th:href="@{/employees/edit/{id}(id=${emp.id})}" class="btn btn-sm btn-outline-warning" title="Edit"
+                     sec:authorize="hasAnyRole('ADMIN','HR')">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a th:href="@{/employees/delete/{id}(id=${emp.id})}" class="btn btn-sm btn-outline-danger" title="Delete"
+                     sec:authorize="hasRole('ADMIN')"
+                     onclick="return confirm('Delete this employee?')">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(employees)}">
+              <td colspan="8" class="text-center text-muted py-5">
+                <i class="fas fa-users fa-2x d-block mb-2" style="color:#cbd5e1;"></i>
+                No employees found. <a href="/employees/add" sec:authorize="hasAnyRole('ADMIN','HR')">Add one now</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

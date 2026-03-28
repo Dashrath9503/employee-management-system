@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head}"><title>Employee Attendance — EMS</title></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}" th:with="activePage='attendance'"></div>
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title">
+      <i class="fas fa-calendar-check topbar-icon me-2"></i>
+      Attendance — <span th:text="${employee.fullName}">Employee</span>
+    </span>
+    <a href="/attendance" class="btn btn-sm btn-outline-secondary px-3"><i class="fas fa-arrow-left me-1"></i>Back</a>
+  </div>
+  <div class="page-body">
+    <!-- Summary Stats -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon" style="background:#dcfce7;"><i class="fas fa-check-circle" style="color:#16a34a;"></i></div>
+            <div>
+              <div class="stat-val" th:text="${present}">0</div>
+              <div class="stat-label">Days Present</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon" style="background:#fee2e2;"><i class="fas fa-times-circle" style="color:#dc2626;"></i></div>
+            <div>
+              <div class="stat-val" th:text="${absent}">0</div>
+              <div class="stat-label">Days Absent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon" style="background:#ede9fe;"><i class="fas fa-id-badge" style="color:#4f46e5;"></i></div>
+            <div>
+              <div class="stat-val" th:text="${employee.jobTitle ?: 'N/A'}" style="font-size:1rem;"></div>
+              <div class="stat-label">Job Title</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon" style="background:#e0f2fe;"><i class="fas fa-building" style="color:#0284c7;"></i></div>
+            <div>
+              <div class="stat-val" th:text="${employee.department != null ? employee.department.name : 'N/A'}" style="font-size:.95rem;"></div>
+              <div class="stat-label">Department</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-pro card-pro-body">
+      <div class="section-hdr mb-3"><i class="fas fa-list me-2" style="color:#4f46e5;"></i>Attendance Records</div>
+      <div class="table-responsive">
+        <table class="table table-pro mb-0">
+          <thead>
+            <tr><th>Date</th><th>Status</th><th>Check In</th><th>Check Out</th><th>Remarks</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="a : ${records}">
+              <td style="font-weight:500;" th:text="${#temporals.format(a.attendanceDate,'dd MMM yyyy')}">-</td>
+              <td>
+                <span th:class="${a.status.name()=='PRESENT'?'badge-active':a.status.name()=='ABSENT'?'badge-inactive':a.status.name()=='HALF_DAY'?'badge-leave':'badge-terminated'}"
+                      th:text="${a.status}">-</span>
+              </td>
+              <td th:text="${a.checkIn ?: '-'}">-</td>
+              <td th:text="${a.checkOut ?: '-'}">-</td>
+              <td style="font-size:.82rem;" th:text="${a.remarks ?: '-'}">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(records)}">
+              <td colspan="5" class="text-center text-muted py-4">No attendance records found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

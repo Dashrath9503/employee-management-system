@@ -144,9 +144,37 @@ Open browser → **http://localhost:8080**
 
 ---
 
-## 📁 Project Structure
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login](screenshots/login.png)
+
+### 📊 Dashboard with Charts
+![Dashboard](screenshots/dashboard.png)
+
+### 👥 Employee List
+![Employee List](screenshots/employee-list.png)
+
+### ➕ Add Employee
+![Add Employee](screenshots/add-employee.png)
+
+### 👤 Employee Details
+![Employee View](screenshots/employee-view.png)
+
+### 🏢 Departments
+![Departments](screenshots/departments.png)
+
+### 📅 Attendance
+![Attendance](screenshots/attendance.png)
+
+### 🌿 Leave Management
+![Leave](screenshots/leave.png)
 
 ```
+
+## 📁 Project Structure
+
+
 employee-management/
 ├── src/
 │   └── main/

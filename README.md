@@ -12,7 +12,7 @@
 ![Maven](https://img.shields.io/badge/Maven-3.6+-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Roles](#-role-based-access) • [Screenshots](#-screenshots) • [Project Structure](#project-structure)
+[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [Roles](#-role-based-access) • [Screenshots](#-screenshots) • [Project Structure](#-project-Structure)
 
 </div>
 
